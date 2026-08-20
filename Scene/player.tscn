@@ -1,0 +1,253 @@
+[gd_scene format=3 uid="uid://d210n5prdsjvl"]
+
+[ext_resource type="Texture2D" uid="uid://cn3exxolx3q0r" path="res://Resource/Tiles/Player.png" id="1_kelma"]
+[ext_resource type="Script" uid="uid://cc1bepwqtkfog" path="res://Scene/player.gd" id="1_y8w33"]
+[ext_resource type="Texture2D" uid="uid://x5ml3s7ulawp" path="res://Resource/Tiles/indicator.png" id="3_p6qlh"]
+[ext_resource type="Texture2D" uid="uid://ccp7583r3stj8" path="res://Resource/Tiles/HealthBar.png" id="3_xa75v"]
+[ext_resource type="Texture2D" uid="uid://c0p51x52uito2" path="res://Resource/Tiles/gohst.png" id="4_58ae2"]
+[ext_resource type="Script" uid="uid://cii0j5es7c3v1" path="res://Scene/knob.gd" id="5_ivevv"]
+[ext_resource type="Texture2D" uid="uid://cbpold3oq53es" path="res://Resource/Tiles/Expbar.png" id="6_r6jsd"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wfuwq"]
+atlas = ExtResource("1_kelma")
+region = Rect2(0, 0, 125, 144)
+margin = Rect2(0, 0, 12, 0)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_b8xra"]
+size = Vector2(20, 29)
+
+[sub_resource type="Animation" id="Animation_y8w33"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Texture:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+
+[sub_resource type="Animation" id="Animation_xa75v"]
+resource_name = "idle"
+length = 0.3
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Texture:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.10000001, 0.20000002),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [0, 1, 2]
+}
+
+[sub_resource type="Animation" id="Animation_r6jsd"]
+resource_name = "left"
+length = 0.3
+loop_mode = 1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Texture:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [9, 10, 11]
+}
+
+[sub_resource type="Animation" id="Animation_58ae2"]
+resource_name = "right"
+length = 0.3
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Texture:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.10000001, 0.20000002),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [3, 4, 5]
+}
+
+[sub_resource type="Animation" id="Animation_ivevv"]
+resource_name = "up"
+length = 0.3
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Texture:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.10000001, 0.20000002),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [6, 7, 8]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_58ae2"]
+_data = {
+&"RESET": SubResource("Animation_y8w33"),
+&"down": SubResource("Animation_xa75v"),
+&"left": SubResource("Animation_r6jsd"),
+&"right": SubResource("Animation_58ae2"),
+&"up": SubResource("Animation_ivevv")
+}
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_2sw5t"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_wr75k"]
+texture = ExtResource("3_p6qlh")
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_b8xra"]
+atlas = ExtResource("4_58ae2")
+region = Rect2(115, 227, 26, 27)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_fllkr"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_aqfuc"]
+atlas = ExtResource("1_kelma")
+region = Rect2(3, 2, 27, 25)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xa75v"]
+atlas = ExtResource("3_xa75v")
+region = Rect2(34, 1, 31, 3)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jlhxr"]
+atlas = ExtResource("3_xa75v")
+region = Rect2(0, 1, 33, 4)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gkccs"]
+atlas = ExtResource("3_xa75v")
+region = Rect2(67, 1, 31, 3)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kkaur"]
+atlas = ExtResource("6_r6jsd")
+region = Rect2(0, 57, 126, 6)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mp3xo"]
+atlas = ExtResource("6_r6jsd")
+region = Rect2(0, 10, 128, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_k7mqb"]
+atlas = ExtResource("6_r6jsd")
+region = Rect2(0, 31, 126, 6)
+
+[node name="Player" type="CharacterBody2D" unique_id=1247792071 groups=["player"]]
+collision_layer = 2
+motion_mode = 1
+script = ExtResource("1_y8w33")
+
+[node name="Texture" type="Sprite2D" parent="." unique_id=1477118840]
+position = Vector2(6, 0)
+texture = SubResource("AtlasTexture_wfuwq")
+hframes = 3
+vframes = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=322846843]
+position = Vector2(0, -0.5)
+shape = SubResource("RectangleShape2D_b8xra")
+
+[node name="Animation" type="AnimationPlayer" parent="." unique_id=1003650721]
+libraries/ = SubResource("AnimationLibrary_58ae2")
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=788789478]
+zoom = Vector2(2.2, 2.2)
+limit_smoothed = true
+position_smoothing_enabled = true
+position_smoothing_speed = 2.0
+
+[node name="Axes" type="Node2D" parent="." unique_id=414884466]
+
+[node name="ProgressBar" type="ProgressBar" parent="." unique_id=213471676]
+visible = false
+offset_left = -12.0
+offset_top = -23.0
+offset_right = 36.0
+offset_bottom = -13.0
+scale = Vector2(0.5, 0.5)
+theme_override_font_sizes/font_size = 10
+theme_override_styles/background = SubResource("StyleBoxEmpty_2sw5t")
+theme_override_styles/fill = SubResource("StyleBoxTexture_wr75k")
+show_percentage = false
+
+[node name="StandaloneLayer" type="CanvasLayer" parent="." unique_id=880747269]
+
+[node name="Knob" type="TouchScreenButton" parent="StandaloneLayer" unique_id=871839029]
+modulate = Color(1, 1, 1, 0)
+position = Vector2(143, 498)
+scale = Vector2(3, 3)
+texture_normal = SubResource("AtlasTexture_b8xra")
+script = ExtResource("5_ivevv")
+
+[node name="UI" type="Control" parent="StandaloneLayer" unique_id=678797035]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(4, 4)
+
+[node name="H" type="HBoxContainer" parent="StandaloneLayer/UI" unique_id=1969627173]
+layout_mode = 1
+offset_right = 71.75
+offset_bottom = 20.25
+offset_transform_enabled = true
+offset_transform_position = Vector2(5, 5)
+
+[node name="Panel" type="PanelContainer" parent="StandaloneLayer/UI/H" unique_id=2031702948]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_fllkr")
+
+[node name="Avatar" type="TextureRect" parent="StandaloneLayer/UI/H/Panel" unique_id=786641891]
+custom_minimum_size = Vector2(28, 20)
+layout_mode = 2
+texture = SubResource("AtlasTexture_aqfuc")
+expand_mode = 1
+stretch_mode = 2
+
+[node name="V" type="VBoxContainer" parent="StandaloneLayer/UI/H" unique_id=1800198482]
+layout_mode = 2
+
+[node name="HealthBar" type="TextureProgressBar" parent="StandaloneLayer/UI/H/V" unique_id=934924877]
+layout_mode = 2
+size_flags_vertical = 4
+offset_transform_scale = Vector2(2, 1.5)
+step = 0.1
+texture_progress = SubResource("AtlasTexture_xa75v")
+
+[node name="HealthBarEased" type="TextureProgressBar" parent="StandaloneLayer/UI/H/V/HealthBar" unique_id=1860628615]
+show_behind_parent = true
+layout_mode = 0
+offset_right = 33.0
+offset_bottom = 4.0
+size_flags_vertical = 4
+step = 0.1
+texture_under = SubResource("AtlasTexture_jlhxr")
+texture_progress = SubResource("AtlasTexture_gkccs")
+
+[node name="ExperienceBar" type="TextureProgressBar" parent="StandaloneLayer/UI/H/V" unique_id=1179934823]
+layout_mode = 2
+offset_transform_enabled = true
+offset_transform_scale = Vector2(0.5, 0.5)
+offset_transform_pivot_ratio = Vector2(0, 0.5)
+step = 0.1
+texture_under = SubResource("AtlasTexture_kkaur")
+texture_over = SubResource("AtlasTexture_mp3xo")
+texture_progress = SubResource("AtlasTexture_k7mqb")
