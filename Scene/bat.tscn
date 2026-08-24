@@ -72,6 +72,7 @@ region = Rect2(34, 1, 32, 4)
 collision_layer = 8
 collision_mask = 8
 script = ExtResource("1_yv8an")
+damage_amount = 2
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=760109898]
 texture = ExtResource("2_62edm")

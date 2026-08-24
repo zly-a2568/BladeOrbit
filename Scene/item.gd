@@ -105,7 +105,9 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	timer+=delta
 	if timer>=10.0:
-		queue_free()
+		var t=create_tween()
+		t.tween_property(self,"modulate:a",0.0,0.2)
+		t.tween_callback(queue_free)
 
 
 
@@ -121,7 +123,7 @@ func buff(player:Player):
 			amount=(clamp(player.get("axe_count")+1,1,15)) as int
 		ItemType.ADD_ROTATE_SPEED:
 			property="axe_rotate_speed"
-			amount=(clamp(player.get("axe_rotate_speed")+PI/2,0.0,PI*2.5)) as float
+			amount=(clamp(player.get("axe_rotate_speed")+PI/2,0.0,PI*3.0)) as float
 		ItemType.ADD_HIGH_DAMAGE_RATE:
 			property="high_damage_rate"
 			amount=(player.get("high_damage_rate")+0.5) as float
@@ -135,4 +137,6 @@ func _on_body_entered(body: Node2D) -> void:
 	if body is Player:
 		buff(body)
 		SoundManager.play_sound("pickup","item")
-		queue_free()
+		var t=create_tween()
+		t.tween_property(self,"scale",Vector2.ZERO,0.2)
+		t.tween_callback(queue_free)

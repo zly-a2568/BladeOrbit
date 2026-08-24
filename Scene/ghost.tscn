@@ -51,7 +51,7 @@ _data = {
 }
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wfuwq"]
-size = Vector2(37, 35)
+size = Vector2(27.25, 25.125)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_glqsv"]
 atlas = ExtResource("3_bu4e3")
@@ -65,9 +65,9 @@ region = Rect2(34, 1, 32, 4)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("1_qn62s")
-health = 5.0
-damage_amount = 2
-exp_reward = 1.0
+health = 8.0
+damage_amount = 3
+exp_reward = 1.5
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1831122682]
 position = Vector2(0, -2)
@@ -87,7 +87,6 @@ collision_layer = 8
 collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Hitter" unique_id=1788202126]
-position = Vector2(1, 1)
 shape = SubResource("RectangleShape2D_wfuwq")
 debug_color = Color(0, 0.6, 0.69803923, 0)
 
