@@ -17,7 +17,7 @@ const PATH_SERVICE_GROUP := "path_service"
 @export var health: float = 3.0
 @export var damage_amount: int = 1
 @export var exp_reward: float = 0.5
-@export var invincible_time: float = 0.6
+@export var invincible_time: float = 0.4
 
 var damaged: bool = false
 var dying: bool = false

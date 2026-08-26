@@ -6,9 +6,10 @@ enum ItemType{
 	ADD_AXE = 7,
 	ADD_ROTATE_SPEED = 4,
 	ADD_HIGH_DAMAGE_RATE = 3,
-	ADD_HIGH_DAMAGE_CHANCE = 1
+	ADD_HIGH_DAMAGE_CHANCE = 1,
+	INVINCIBLE = 0
 }
-const chances=[0.0,0.4,0.8,0.4,0.25,0.0,0.0,0.2]
+const chances=[0.6,0.4,0.8,0.4,0.25,0.0,0.0,0.2]
 
 var id:=ItemType.BLOOD_UP
 var timer:float=0.0
@@ -115,6 +116,9 @@ func buff(player:Player):
 	var property:StringName
 	var amount:Variant
 	match id:
+		ItemType.INVINCIBLE:
+			property="invincible"
+			amount=true
 		ItemType.BLOOD_UP:
 			property="health"
 			amount=(player.get("health")+2.0) as float

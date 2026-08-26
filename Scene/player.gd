@@ -4,6 +4,13 @@ class_name Player
 signal high_damage()
 signal level_up(level: int)
 
+enum LevelUpChoiceType{
+	HEALTH_UP,
+	DAMAGE_UP,
+	ADD_AXES,
+	HIGH_DAMAGE_UP
+}
+
 const axe_inst: PackedScene = preload("res://Scene/axe.tscn")
 
 const SPEED = 180.0
@@ -15,20 +22,34 @@ const BLINK_INTERVAL = 0.1
 
 const LEVEL_UP_XP := [10.0, 50.0, 150.0,250.0,400.0]
 const HEALTH_BAR_MAX :=[18.0, 28.0, 36.0, 45.0]
-const LEVEL_EXP_BAR_MAX := [50.0, 150.0, 250.0, 400.0]
+const LEVEL_EXP_BAR_MAX := [50.0, 150.0, 250.0, 400.0,800.0]
+const LEVEL_UP_CHOICES := [
+	[LevelUpChoiceType.HEALTH_UP,1.0],
+	[LevelUpChoiceType.DAMAGE_UP,1.5],
+	[LevelUpChoiceType.ADD_AXES,1],
+	[LevelUpChoiceType.HIGH_DAMAGE_UP,1.0]
+]
 
 #player game properties
 @export_group("Properties")
-@export var health: int = 12
+@export var health: int = 12:
+	set(v):
+		health=clamp(v,0.0,health_bar.max_value)
+		health_bar.value=v
+		var t=create_tween()
+		t.tween_property(health_bar, "value", v, 0.2).set_ease(Tween.EASE_OUT)
+		t.tween_property(health_bar_eased, "value", v, 0.4).set_ease(Tween.EASE_OUT)
 @export var experience: float = 0.0:
 	set(v):
 		experience = v
 		create_tween().tween_property($StandaloneLayer/UI/H/V/ExperienceBar, "value", v, 0.2).set_ease(Tween.EASE_IN)
 @export var axe_rotate_speed: float = PI * 1.5
 @export var axe_count: int = 1
+@export var base_damage: float = 2.0
 @export var high_damage_rate: float = 1.5
 @export var high_damage_chance: float = 0.12
-@export var invincible_time: float = 1.0
+@export var recovery_time: float = 1.0
+@export var invincible_time:float = 5.0
 
 var damaged: bool = false
 var shocking: bool = false
@@ -36,6 +57,10 @@ var shock_amount: float = 0
 #var game_level: int = 1
 var dying: bool = false
 var can_restart: bool = false
+var level_up_vals:=[]
+var choice:int
+var selected:bool=false
+var invincible:bool=false
 
 @onready var animation: AnimationPlayer = $Animation
 @onready var sprite: Sprite2D = $Texture
@@ -43,12 +68,17 @@ var can_restart: bool = false
 @onready var axes: Node2D = $Axes
 @onready var invincible_bar: ProgressBar = $ProgressBar
 @onready var shader := $StandaloneLayer/Vignette.material as ShaderMaterial
-@onready var health_bar: TextureProgressBar = $StandaloneLayer/UI/H/V/HealthBar
-@onready var health_bar_eased: TextureProgressBar = $StandaloneLayer/UI/H/V/HealthBar/HealthBarEased
+@onready var health_bar: TextureProgressBar = $StandaloneLayer/UI/H/V/H/HealthBar
+@onready var health_bar_eased: TextureProgressBar = $StandaloneLayer/UI/H/V/H/HealthBar/HealthBarEased
 @onready var experience_bar: TextureProgressBar = $StandaloneLayer/UI/H/V/ExperienceBar
 @onready var crit_label: Label = $StandaloneLayer/UI/Label
 @onready var mask: TextureRect = $StandaloneLayer/Mask
 @onready var game_over_label: Label = $StandaloneLayer/Label
+@onready var level_label: Label = $StandaloneLayer/UI/H/V/H/Label
+@onready var item_1: Button = $StandaloneLayer/SelectPanel/H/Button1
+@onready var item_2: Button = $StandaloneLayer/SelectPanel/H/Button2
+@onready var item_3: Button = $StandaloneLayer/SelectPanel/H/Button3
+
 
 
 func _ready() -> void:
@@ -58,6 +88,11 @@ func _ready() -> void:
 		bar.max_value = health
 		bar.value = health
 	experience_bar.max_value = 10.0
+	level_up.connect(_on_level_up)
+	$InvincibleTimer.timeout.connect(func ():
+		invincible=false
+		create_tween().tween_property($InvincibleCover,"modulate:a",0.0,0.2)
+		)
 	
 
 
@@ -75,7 +110,7 @@ func _physics_process(delta: float) -> void:
 	var dir := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
 	if dir != Vector2.ZERO:
 		var speed := SPEED * (DAMAGED_SPEED_FACTOR if damaged else 1.0)
-		velocity = speed * (Vector2(0, dir.y) if absf(dir.y) >= absf(dir.x) else Vector2(dir.x, 0))
+		velocity = speed * dir
 		_face_direction()
 	else:
 		velocity = Vector2.ZERO
@@ -94,13 +129,15 @@ func apply_buff(property: StringName, value: Variant) -> void:
 	set(property, value)
 	if property == &"axe_rotate_speed" or property == &"axe_count":
 		update_axes.call_deferred()
-	elif property == &"health":
-		create_tween().tween_property(health_bar, "value", health, 0.2).set_ease(Tween.EASE_OUT)
-		create_tween().tween_property(health_bar_eased, "value", health, 0.4).set_ease(Tween.EASE_OUT)
+	if property == &"invincible":
+		create_tween().tween_property($InvincibleCover,"modulate:a",0.5,0.2)
+		$InvincibleTimer.wait_time=invincible_time
+		$InvincibleTimer.start()
+
 
 
 func get_damage(amount: int) -> void:
-	if dying or damaged:
+	if dying or damaged or invincible:
 		return
 	damaged = true
 	health -= amount
@@ -174,6 +211,7 @@ func _update_camera_shake(delta: float) -> void:
 func _update_game_level() -> void:
 	while Levels.game_level <= LEVEL_UP_XP.size() and experience >= LEVEL_UP_XP[Levels.game_level - 1]:
 		Levels.game_level += 1
+		level_label.text="Lv."+str(Levels.game_level)
 		experience_bar.max_value = LEVEL_EXP_BAR_MAX[Levels.game_level - 2]
 		for bar:TextureProgressBar in [health_bar,health_bar_eased]:
 			bar.max_value=HEALTH_BAR_MAX[Levels.game_level - 2]
@@ -182,8 +220,6 @@ func _update_game_level() -> void:
 
 func _play_hurt_feedback() -> void:
 	SoundManager.play_sound("pain", "player")
-	health_bar.value = health
-	create_tween().tween_property(health_bar_eased, "value", health, 0.3)
 	_spawn_hurt_clone_flash()
 	await _blink_red()
 	_run_invincibility_drain()
@@ -211,7 +247,7 @@ func _run_invincibility_drain() -> void:
 	invincible_bar.value = 0.0
 	invincible_bar.visible = true
 	var t = get_tree().create_tween()
-	t.tween_property(invincible_bar, "value", 100.0, invincible_time)
+	t.tween_property(invincible_bar, "value", 100.0, recovery_time)
 	t.tween_property(self, "damaged", false, 0.0)
 	t.tween_property(invincible_bar, "visible", false, 0.0)
 
@@ -221,6 +257,7 @@ func _configure_axes(rephase: bool) -> void:
 	for a: Axe in axes.get_children():
 		a.player = self
 		a.rotate_speed = axe_rotate_speed
+		a.BASE_DAMAGE=base_damage
 		if rephase:
 			a.angular = TAU / axe_count * ct
 		ct += 1
@@ -240,3 +277,63 @@ func _on_high_damage() -> void:
 	t.tween_property(clone_body, "modulate:a", 0.0, 0.3).set_ease(Tween.EASE_IN)
 	t.parallel().tween_property(clone_body, "offset_transform_scale", Vector2.ONE * 1.5, 0.3)
 	t.tween_callback(clone_body.queue_free)
+
+func _on_level_up(level:int):
+	var choices:Array=[]
+	for a in LEVEL_UP_CHOICES:
+		choices.append(a)
+	choices.shuffle()
+	for a in [item_1,item_2,item_3]:
+		var rand:Array= choices[0]
+		choices.remove_at(0)
+		level_up_vals.append(rand)
+		match(rand[0]):
+			LevelUpChoiceType.HEALTH_UP:
+				a.text="生命值提升至100%"
+			LevelUpChoiceType.DAMAGE_UP:
+				a.text="攻击力提升1.5"
+			LevelUpChoiceType.ADD_AXES:
+				a.text="增加一个武器"
+			LevelUpChoiceType.HIGH_DAMAGE_UP:
+				a.text="暴击伤害倍率提升100%"
+	get_tree().paused=true
+	var t:= create_tween()
+	t.tween_property(mask,"modulate:a",0.5,0.5)
+	$StandaloneLayer/SelectPanel.show()
+	t.tween_property($StandaloneLayer/SelectPanel,"modulate:a",1.0,0.2)
+
+func select_level_up_buff(c:int):
+	if selected:
+		return
+	selected=true
+	var cho=level_up_vals[c]
+	match(cho[0]):
+		LevelUpChoiceType.HEALTH_UP:
+			health=health_bar.max_value*cho[1]
+		LevelUpChoiceType.DAMAGE_UP:
+			base_damage+=cho[1]
+			update_axes()
+		LevelUpChoiceType.ADD_AXES:
+			axe_count+=1
+			update_axes()
+		LevelUpChoiceType.HIGH_DAMAGE_UP:
+			high_damage_rate+=cho[1]
+	var t=create_tween()
+	t.tween_property($StandaloneLayer/SelectPanel,"modulate:a",0.0,0.2)
+	$StandaloneLayer/SelectPanel.hide()
+	t.tween_property($StandaloneLayer/Mask,"modulate:a",0.0,0.5)
+	selected=false
+	level_up_vals.clear()
+	t.tween_property(get_tree(),"paused",false,0.0)
+
+func _on_label1_gui_input():
+	choice=0
+	select_level_up_buff(choice)
+
+func _on_label2_gui_input():
+	choice=1
+	select_level_up_buff(choice)
+
+func _on_label3_gui_input():
+	choice=2
+	select_level_up_buff(choice)

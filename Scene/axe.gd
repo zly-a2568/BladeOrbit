@@ -2,7 +2,7 @@ extends CharacterBody2D
 class_name Axe
 
 const RADIUS = 40.0
-const BASE_DAMAGE = 2.0
+var BASE_DAMAGE:= 2.0
 const HIT_CAMERA_SHAKE = 4.0
 
 var rotate_speed = PI
