@@ -1,14 +1,17 @@
 extends TouchScreenButton
 
 
-const pos_delta:Vector2=Vector2(39.0,39.0)
-var pressing:bool=false
-var origin_pos:Vector2=Vector2.ZERO
-var fg_pos:Vector2=Vector2.ZERO
+var pos_delta: Vector2 = Vector2(39.0, 39.0)
+var max_offset: float = 50.0
+var pressing: bool = false
+var origin_pos: Vector2 = Vector2.ZERO
+var fg_pos: Vector2 = Vector2.ZERO
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	pass # Replace with function body.
+	var c: Dictionary = Config.data["knob"]
+	pos_delta = Vector2(c["pos_delta"][0], c["pos_delta"][1])
+	max_offset = c["max_offset"]
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventScreenTouch:
@@ -25,7 +28,7 @@ func _input(event: InputEvent) -> void:
 	if event is InputEventScreenDrag:
 		fg_pos=event.position-pos_delta
 		var delta:Vector2=(fg_pos-origin_pos).limit_length(1.0)
-		position=origin_pos+delta*50.0
+		position=origin_pos+delta*max_offset
 		if delta.x<0:
 			Input.action_release("ui_right")
 			Input.action_press("ui_left",abs(delta.x))

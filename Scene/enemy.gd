@@ -7,12 +7,14 @@ signal died(exp_reward: float)
 const ITEM = preload("uid://biqu7yu622j6t")
 const ATTACKING_NUMBER = preload("uid://xse7q58h2rl8")
 
-const MAP_SPEED := 64.0
-const TILE := 16.0
-const LOOT_CHANCE := 0.5
-const CONTACT_HIT_COOLDOWN := 0.2
-const FLASH_TIMES := 4
 const PATH_SERVICE_GROUP := "path_service"
+
+# 配置数据（游戏启动时由 Config 一次性写入，见 _apply_config）
+var MAP_SPEED: float
+var TILE: float
+var LOOT_CHANCE: float
+var CONTACT_HIT_COOLDOWN: float
+var FLASH_TIMES: int
 
 @export var health: float = 3.0
 @export var damage_amount: int = 1
@@ -34,10 +36,21 @@ var _flashing: bool = false
 
 
 func _ready() -> void:
+	_apply_config()
 	health_bar.max_value = health
 	$Hitter.body_entered.connect(_on_hitter_body_entered)
 	next_pos = tile_pos
 	_init_path_following()
+
+
+func _apply_config() -> void:
+	var c: Dictionary = Config.data["enemy"]
+	MAP_SPEED = c["map_speed"]
+	TILE = c["tile"]
+	LOOT_CHANCE = c["loot_chance"]
+	CONTACT_HIT_COOLDOWN = c["contact_hit_cooldown"]
+	FLASH_TIMES = int(c["flash_times"])
+	invincible_time=float(c["invincible_time"])
 
 
 func _process(delta: float) -> void:

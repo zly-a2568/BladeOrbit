@@ -3,9 +3,9 @@ class_name Shooter
 
 const ENEMY_BULLET = preload("uid://bhscmcrks7mqp")
 
-@export var attacking_radius: float = 120.0
-@export var bullet_speed: float = 100.0
-@export var shoot_interval: float = 1.0
+var attacking_radius: float
+var bullet_speed: float
+var shoot_interval: float
 
 var player: Player
 var shoot_timer: float = 0.0
@@ -13,7 +13,16 @@ var shoot_timer: float = 0.0
 
 func _ready() -> void:
 	super()
+	_apply_config()
 	player = get_tree().get_first_node_in_group("player")
+
+
+func _apply_config() -> void:
+	super()
+	var c: Dictionary = Config.data["shooter"]
+	attacking_radius = c["attacking_radius"]
+	bullet_speed = c["bullet_speed"]
+	shoot_interval = c["shoot_interval"]
 
 
 func _act(delta: float) -> void:

@@ -9,7 +9,7 @@ enum ItemType{
 	ADD_HIGH_DAMAGE_CHANCE = 1,
 	INVINCIBLE = 0
 }
-const chances=[0.6,0.4,0.8,0.4,0.25,0.0,0.0,0.2]
+var chances: Array = []
 
 var id:=ItemType.BLOOD_UP
 var timer:float=0.0
@@ -93,6 +93,7 @@ static func pick_weighted() -> ItemType:
 		
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	chances = Config.data["item"]["chances"]
 	if not inited:
 		init_weighted_random(chances)
 		inited=true
@@ -113,6 +114,7 @@ func _process(delta: float) -> void:
 
 
 func buff(player:Player):
+	var b: Dictionary = Config.data["item"]["buffs"]
 	var property:StringName
 	var amount:Variant
 	match id:
@@ -121,19 +123,19 @@ func buff(player:Player):
 			amount=true
 		ItemType.BLOOD_UP:
 			property="health"
-			amount=(player.get("health")+2.0) as float
+			amount=(player.get("health")+b["blood_up"]) as float
 		ItemType.ADD_AXE:
 			property="axe_count"
-			amount=(clamp(player.get("axe_count")+1,1,15)) as int
+			amount=(clamp(player.get("axe_count")+b["add_axe"],b["axe_count_min"],b["axe_count_max"])) as int
 		ItemType.ADD_ROTATE_SPEED:
 			property="axe_rotate_speed"
-			amount=(clamp(player.get("axe_rotate_speed")+PI/2,0.0,PI*3.0)) as float
+			amount=(clamp(player.get("axe_rotate_speed")+b["add_rotate_speed"],b["rotate_speed_min"],b["rotate_speed_max"])) as float
 		ItemType.ADD_HIGH_DAMAGE_RATE:
 			property="high_damage_rate"
-			amount=(player.get("high_damage_rate")+0.5) as float
+			amount=(player.get("high_damage_rate")+b["add_high_damage_rate"]) as float
 		ItemType.ADD_HIGH_DAMAGE_CHANCE:
 			property="high_damage_chance"
-			amount=(clamp(player.get("high_damage_chance")+0.03,0.0,0.8)) as float
+			amount=(clamp(player.get("high_damage_chance")+b["add_high_damage_chance"],b["high_damage_chance_min"],b["high_damage_chance_max"])) as float
 	player.apply_buff(property,amount)
 
 

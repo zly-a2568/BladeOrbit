@@ -1,13 +1,18 @@
 extends CharacterBody2D
 class_name Axe
 
-const RADIUS = 40.0
-var BASE_DAMAGE:= 2.0
-const HIT_CAMERA_SHAKE = 4.0
+var RADIUS: float=40.0
+var BASE_DAMAGE := 2.0
+var HIT_CAMERA_SHAKE: float
 
 var rotate_speed = PI
 var angular: float = PI / 4 * 3
 var player: Player
+
+
+func _ready() -> void:
+	var c: Dictionary = Config.data["axe"]
+	HIT_CAMERA_SHAKE = c["hit_camera_shake"]
 
 
 func _physics_process(delta: float) -> void:

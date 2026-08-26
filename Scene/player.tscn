@@ -211,7 +211,6 @@ shape = SubResource("RectangleShape2D_b8xra")
 libraries/ = SubResource("AnimationLibrary_58ae2")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=788789478]
-zoom = Vector2(2, 2)
 limit_smoothed = true
 position_smoothing_enabled = true
 position_smoothing_speed = 2.0
@@ -259,8 +258,6 @@ theme = ExtResource("6_2sw5t")
 layout_mode = 1
 offset_right = 165.0
 offset_bottom = 56.0
-scale = Vector2(4, 4)
-offset_transform_scale = Vector2(4, 4)
 
 [node name="Panel" type="PanelContainer" parent="StandaloneLayer/UI/H" unique_id=2031702948]
 custom_maximum_size = Vector2(28, 28)
@@ -321,6 +318,7 @@ texture_over = SubResource("AtlasTexture_mp3xo")
 texture_progress = SubResource("AtlasTexture_k7mqb")
 
 [node name="Label" type="Label" parent="StandaloneLayer/UI" unique_id=1548771795]
+process_mode = 3
 modulate = Color(1, 1, 1, 0)
 layout_mode = 1
 anchors_preset = 1
@@ -336,6 +334,7 @@ theme_override_font_sizes/font_size = 50
 text = "暴击 "
 
 [node name="Vignette" type="TextureRect" parent="StandaloneLayer" unique_id=637021100]
+process_mode = 3
 material = SubResource("ShaderMaterial_p6qlh")
 anchors_preset = 15
 anchor_right = 1.0
@@ -375,14 +374,17 @@ layout_mode = 2
 theme = ExtResource("6_2sw5t")
 
 [node name="Button1" type="Button" parent="StandaloneLayer/SelectPanel/H" unique_id=185712311]
+process_mode = 2
 layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="Button2" type="Button" parent="StandaloneLayer/SelectPanel/H" unique_id=110346950]
+process_mode = 2
 layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="Button3" type="Button" parent="StandaloneLayer/SelectPanel/H" unique_id=2028169896]
+process_mode = 2
 layout_mode = 2
 size_flags_horizontal = 3
 

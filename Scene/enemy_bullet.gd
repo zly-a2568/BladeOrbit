@@ -1,15 +1,18 @@
 extends CharacterBody2D
 
-const LIFETIME := 10.0
-const FADE_TIME := 0.2
-
-@export var damage: int = 2
+var LIFETIME: float
+var FADE_TIME: float
+var damage: int = 2
 
 var timer: float = 0.0
 var valid: bool = true
 
 
 func _ready() -> void:
+	var c: Dictionary = Config.data["enemy_bullet"]
+	LIFETIME = c["lifetime"]
+	FADE_TIME = c["fade_time"]
+	damage = int(c["damage"])
 	$Hitter.body_entered.connect(_on_hitter_body_entered)
 
 

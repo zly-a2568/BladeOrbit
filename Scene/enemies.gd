@@ -4,12 +4,13 @@ class_name EnemySpawner
 
 signal player_tile_changed(tile: Vector2i)
 
-const CELL_SIZE := 16.0
-const SPAWN_DISTANCE_MIN := 100.0
-const SPAWN_DISTANCE_MAX := 400.0
-const ENEMY_NUMBER_MAX :=150
-const GRID_RADIUS := 64
-const GRID_REBUILD_MARGIN := 32
+# 配置数据（游戏启动时由 Config 一次性写入，见 _apply_config）
+var CELL_SIZE: float
+var SPAWN_DISTANCE_MIN: float
+var SPAWN_DISTANCE_MAX: float
+var ENEMY_NUMBER_MAX: int
+var GRID_RADIUS: int
+var GRID_REBUILD_MARGIN: int
 
 enum EnemyType {
 	BAT,
@@ -23,17 +24,14 @@ const ENEMY_SCENES := {
 	EnemyType.SHOOTER: preload("res://Scene/shooter.tscn"),
 }
 
-var SPAWN_ROLLS := [
-	[EnemyType.SHOOTER, 0.0],
-	[EnemyType.GHOST, 0.3],
-	[EnemyType.BAT, 0.4],
-]
+# 配置数据（游戏启动时由 Config 一次性写入，见 _apply_config）
+var SPAWN_ROLLS: Array = []
+var spawn_interval: float = 3.0
 
 @onready var map: TileMapLayer = $"../Map"
 @onready var obstacles: TileMapLayer = $"../Obstacles"
 @onready var player: Player = $"../Player"
 
-var spawn_interval := 3.0
 var spawn_timer := 0.0
 var player_tile := Vector2i.ZERO
 var grid_center := Vector2i.ZERO
@@ -41,6 +39,7 @@ var astar_grid := AStarGrid2D.new()
 
 
 func _ready() -> void:
+	_apply_config()
 	add_to_group(Enemy.PATH_SERVICE_GROUP)
 	player.level_up.connect(_on_player_level_up)
 	player_tile = obstacles.local_to_map(obstacles.to_local(player.global_position))
@@ -144,26 +143,29 @@ func _instantiate_enemy(type: EnemyType) -> Enemy:
 	return ENEMY_SCENES[type].instantiate() as Enemy
 
 
+func _apply_config() -> void:
+	var c: Dictionary = Config.data["spawner"]
+	CELL_SIZE = c["cell_size"]
+	SPAWN_DISTANCE_MIN = c["spawn_distance_min"]
+	SPAWN_DISTANCE_MAX = c["spawn_distance_max"]
+	ENEMY_NUMBER_MAX = int(c["enemy_number_max"])
+	GRID_RADIUS = int(c["grid_radius"])
+	GRID_REBUILD_MARGIN = int(c["grid_rebuild_margin"])
+	spawn_interval = c["spawn_interval"]
+	SPAWN_ROLLS = _parse_spawn_rolls(c["spawn_rolls"])
+
+
+func _parse_spawn_rolls(raw: Array) -> Array:
+	var rolls: Array = []
+	for entry in raw:
+		rolls.append([int(entry[0]), entry[1]])
+	return rolls
+
+
 func _on_player_level_up(level: int) -> void:
-	match(level):
-		2:
-			spawn_interval=1.5
-			SPAWN_ROLLS[2] = [EnemyType.BAT,0.5]
-			SPAWN_ROLLS[1] = [EnemyType.GHOST,0.4]
-			SPAWN_ROLLS[0] = [EnemyType.SHOOTER,0.1]
-		3:
-			spawn_interval=0.75
-			SPAWN_ROLLS[2] = [EnemyType.BAT,0.2]
-			SPAWN_ROLLS[1] = [EnemyType.GHOST,0.4]
-			SPAWN_ROLLS[0] = [EnemyType.SHOOTER,0.4]
-			
-		4:
-			spawn_interval=0.4
-			SPAWN_ROLLS[2] = [EnemyType.BAT,0.0]
-			SPAWN_ROLLS[1] = [EnemyType.GHOST,0.3]
-			SPAWN_ROLLS[0] = [EnemyType.SHOOTER,0.7]
-		5:
-			spawn_interval=0.3
-			SPAWN_ROLLS[2] = [EnemyType.BAT,0.4]
-			SPAWN_ROLLS[1] = [EnemyType.GHOST,0.0]
-			SPAWN_ROLLS[0] = [EnemyType.SHOOTER,0.6]
+	var level_config: Dictionary = Config.data["spawner"]["level_config"]
+	if not level_config.has(str(level)):
+		return
+	var cfg: Dictionary = level_config[str(level)]
+	spawn_interval = cfg["spawn_interval"]
+	SPAWN_ROLLS = _parse_spawn_rolls(cfg["spawn_rolls"])

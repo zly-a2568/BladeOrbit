@@ -13,43 +13,39 @@ enum LevelUpChoiceType{
 
 const axe_inst: PackedScene = preload("res://Scene/axe.tscn")
 
-const SPEED = 180.0
-const RECOVERY_SPEED = 32
-const DAMAGED_SPEED_FACTOR = 0.5
-const LOW_HEALTH_THRESHOLD = 3.0
-const BLINK_TIMES = 3
-const BLINK_INTERVAL = 0.1
+# 配置数据（游戏启动时由 Config 一次性写入，见 _apply_config）
+var SPEED: float
+var RECOVERY_SPEED: float
+var DAMAGED_SPEED_FACTOR: float
+var LOW_HEALTH_THRESHOLD: float
+var BLINK_TIMES: int
+var BLINK_INTERVAL: float
 
-const LEVEL_UP_XP := [10.0, 50.0, 150.0,250.0,400.0]
-const HEALTH_BAR_MAX :=[18.0, 28.0, 36.0, 45.0]
-const LEVEL_EXP_BAR_MAX := [50.0, 150.0, 250.0, 400.0,800.0]
-const LEVEL_UP_CHOICES := [
-	[LevelUpChoiceType.HEALTH_UP,1.0],
-	[LevelUpChoiceType.DAMAGE_UP,1.5],
-	[LevelUpChoiceType.ADD_AXES,1],
-	[LevelUpChoiceType.HIGH_DAMAGE_UP,1.0]
-]
+var LEVEL_UP_XP: Array
+var HEALTH_BAR_MAX: Array
+var LEVEL_EXP_BAR_MAX: Array
+var LEVEL_UP_CHOICES: Array
 
 #player game properties
 @export_group("Properties")
-@export var health: int = 12:
+var health: int = 12:
 	set(v):
 		health=clamp(v,0.0,health_bar.max_value)
 		health_bar.value=v
 		var t=create_tween()
 		t.tween_property(health_bar, "value", v, 0.2).set_ease(Tween.EASE_OUT)
 		t.tween_property(health_bar_eased, "value", v, 0.4).set_ease(Tween.EASE_OUT)
-@export var experience: float = 0.0:
+var experience: float = 0.0:
 	set(v):
 		experience = v
 		create_tween().tween_property($StandaloneLayer/UI/H/V/ExperienceBar, "value", v, 0.2).set_ease(Tween.EASE_IN)
-@export var axe_rotate_speed: float = PI * 1.5
-@export var axe_count: int = 1
-@export var base_damage: float = 2.0
-@export var high_damage_rate: float = 1.5
-@export var high_damage_chance: float = 0.12
-@export var recovery_time: float = 1.0
-@export var invincible_time:float = 5.0
+var axe_rotate_speed: float = PI * 1.5
+var axe_count: int = 1
+var base_damage: float = 2.0
+var high_damage_rate: float = 1.5
+var high_damage_chance: float = 0.12
+var recovery_time: float = 1.0
+var invincible_time:float = 5.0
 
 var damaged: bool = false
 var shocking: bool = false
@@ -82,18 +78,44 @@ var invincible:bool=false
 
 
 func _ready() -> void:
+	_apply_config()
 	get_tree().paused = false
 	update_axes.call_deferred()
 	for bar in [health_bar, health_bar_eased]:
 		bar.max_value = health
 		bar.value = health
-	experience_bar.max_value = 10.0
+	experience_bar.max_value = Config.data["player"]["exp_bar_initial_max"]
 	level_up.connect(_on_level_up)
 	$InvincibleTimer.timeout.connect(func ():
 		invincible=false
 		create_tween().tween_property($InvincibleCover,"modulate:a",0.0,0.2)
 		)
 	
+
+
+func _apply_config() -> void:
+	var c: Dictionary = Config.data["player"]
+	SPEED = c["speed"]
+	RECOVERY_SPEED = c["recovery_speed"]
+	DAMAGED_SPEED_FACTOR = c["damaged_speed_factor"]
+	LOW_HEALTH_THRESHOLD = c["low_health_threshold"]
+	BLINK_TIMES = int(c["blink_times"])
+	BLINK_INTERVAL = c["blink_interval"]
+	LEVEL_UP_XP = c["level_up_xp"]
+	HEALTH_BAR_MAX = c["health_bar_max"]
+	LEVEL_EXP_BAR_MAX = c["level_exp_bar_max"]
+	LEVEL_UP_CHOICES = []
+	for entry in c["level_up_choices"]:
+		LEVEL_UP_CHOICES.append([int(entry[0]), entry[1]])
+	health = int(c["health"])
+	experience = c["experience"]
+	axe_rotate_speed = c["axe_rotate_speed"]
+	axe_count = int(c["axe_count"])
+	base_damage = c["base_damage"]
+	high_damage_rate = c["high_damage_rate"]
+	high_damage_chance = c["high_damage_chance"]
+	recovery_time = c["recovery_time"]
+	invincible_time = c["invincible_time"]
 
 
 func _process(delta: float) -> void:
@@ -166,9 +188,9 @@ func update_axes() -> void:
 
 func die() -> void:
 	dying = true
-	get_tree().paused = true
 	animation.play("dying")
 	await get_tree().create_timer(0.7).timeout
+	get_tree().paused = true
 	var t = create_tween()
 	t.tween_property(mask, "modulate:a", 0.5, 0.2)
 	t.tween_property(game_over_label, "visible_characters", 4, 0.4)
