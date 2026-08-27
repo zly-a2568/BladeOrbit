@@ -56,6 +56,7 @@ var can_restart: bool = false
 var level_up_vals:=[]
 var choice:int
 var selected:bool=false
+var selecting:bool=false
 var invincible:bool=false
 
 @onready var animation: AnimationPlayer = $Animation
@@ -119,6 +120,8 @@ func _apply_config() -> void:
 
 
 func _process(delta: float) -> void:
+	if selecting:
+		return
 	_update_vignette_pulse()
 	if dying:
 		return
@@ -127,7 +130,7 @@ func _process(delta: float) -> void:
 
 
 func _physics_process(delta: float) -> void:
-	if dying:
+	if dying or selecting:
 		return
 	var dir := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
 	if dir != Vector2.ZERO:
@@ -319,6 +322,7 @@ func _on_level_up(level:int):
 			LevelUpChoiceType.HIGH_DAMAGE_UP:
 				a.text="暴击伤害倍率提升100%"
 	get_tree().paused=true
+	selecting=true
 	var t:= create_tween()
 	t.tween_property(mask,"modulate:a",0.5,0.5)
 	$StandaloneLayer/SelectPanel.show()
@@ -347,6 +351,7 @@ func select_level_up_buff(c:int):
 	selected=false
 	level_up_vals.clear()
 	t.tween_property(get_tree(),"paused",false,0.0)
+	selecting=false
 
 func _on_label1_gui_input():
 	choice=0
