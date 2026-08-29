@@ -147,7 +147,7 @@ func _input(event: InputEvent) -> void:
 	if dying and can_restart:
 		if event is InputEventMouseButton:
 			if event.button_index == MouseButton.MOUSE_BUTTON_LEFT:
-				get_tree().reload_current_scene()
+				SceneManager.change_scene("res://Scene/game.tscn")
 
 
 func apply_buff(property: StringName, value: Variant) -> void:
@@ -354,13 +354,19 @@ func select_level_up_buff(c:int):
 	selecting=false
 
 func _on_label1_gui_input():
+	if not selecting:
+		return
 	choice=0
 	select_level_up_buff(choice)
 
 func _on_label2_gui_input():
+	if not selecting:
+		return
 	choice=1
 	select_level_up_buff(choice)
 
 func _on_label3_gui_input():
+	if not selecting:
+		return
 	choice=2
 	select_level_up_buff(choice)
