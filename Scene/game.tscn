@@ -4,8 +4,10 @@
 [ext_resource type="PackedScene" uid="uid://d210n5prdsjvl" path="res://Scene/player.tscn" id="1_mhtsl"]
 [ext_resource type="TileSet" uid="uid://jhl0lej2f71k" path="res://Resource/Terrain.tres" id="1_w51g1"]
 [ext_resource type="Script" uid="uid://dk7hwu6sa5vme" path="res://Scene/enemies.gd" id="3_4jv7b"]
+[ext_resource type="Theme" uid="uid://b11g55eg8h4wi" path="res://Resource/theme.tres" id="5_ihreq"]
 
 [node name="Game" type="Node2D" unique_id=834317122]
+process_mode = 3
 script = ExtResource("1_03iqk")
 
 [node name="Map" type="TileMapLayer" parent="." unique_id=1669733737]
@@ -23,3 +25,38 @@ tile_set = ExtResource("1_w51g1")
 
 [node name="Enemies" type="Node2D" parent="." unique_id=750835913]
 script = ExtResource("3_4jv7b")
+
+[node name="StartLayer" type="CanvasLayer" parent="." unique_id=1435178424]
+
+[node name="V" type="VBoxContainer" parent="StartLayer" unique_id=353804363]
+offset_left = 55.0
+offset_top = 45.0
+offset_right = 119.0
+offset_bottom = 152.0
+theme = ExtResource("5_ihreq")
+
+[node name="Title" type="Label" parent="StartLayer/V" unique_id=1102166067]
+layout_mode = 2
+offset_transform_enabled = true
+offset_transform_position = Vector2(-200, 0)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.30980393)
+theme_override_constants/shadow_offset_x = 5
+theme_override_constants/shadow_offset_y = 5
+theme_override_constants/shadow_outline_size = 5
+text = "刃环"
+
+[node name="Start" type="Button" parent="StartLayer/V" unique_id=298356729]
+layout_mode = 2
+offset_transform_enabled = true
+offset_transform_scale = Vector2(0, 0)
+text = "开始"
+
+[node name="Quit" type="Button" parent="StartLayer/V" unique_id=2115706200]
+layout_mode = 2
+offset_transform_enabled = true
+offset_transform_scale = Vector2(0, 0)
+text = "退出"
+
+[connection signal="died" from="Player" to="." method="_on_player_died"]
+[connection signal="pressed" from="StartLayer/V/Start" to="." method="_on_start_pressed"]
+[connection signal="pressed" from="StartLayer/V/Quit" to="." method="_on_quit_pressed"]

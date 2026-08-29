@@ -6,6 +6,8 @@ var max_offset: float = 50.0
 var pressing: bool = false
 var origin_pos: Vector2 = Vector2.ZERO
 var fg_pos: Vector2 = Vector2.ZERO
+@onready var game: Node2D = $"../../.."
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -14,6 +16,8 @@ func _ready() -> void:
 	max_offset = c["max_offset"]
 
 func _input(event: InputEvent) -> void:
+	if not game.started:
+		return
 	if event is InputEventScreenTouch:
 		if event.pressed:
 			position=event.position-pos_delta

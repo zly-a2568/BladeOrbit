@@ -31,6 +31,7 @@ var spawn_interval: float = 3.0
 @onready var map: TileMapLayer = $"../Map"
 @onready var obstacles: TileMapLayer = $"../Obstacles"
 @onready var player: Player = $"../Player"
+@onready var game: Node2D = $".."
 
 var spawn_timer := 0.0
 var player_tile := Vector2i.ZERO
@@ -48,6 +49,8 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	if not game.started:
+		return
 	_tick_spawning(delta)
 	_update_player_tile()
 

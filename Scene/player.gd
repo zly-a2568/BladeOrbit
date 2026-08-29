@@ -2,6 +2,7 @@ extends CharacterBody2D
 class_name Player
 
 signal high_damage()
+signal died()
 signal level_up(level: int)
 
 enum LevelUpChoiceType{
@@ -52,7 +53,6 @@ var shocking: bool = false
 var shock_amount: float = 0
 #var game_level: int = 1
 var dying: bool = false
-var can_restart: bool = false
 var level_up_vals:=[]
 var choice:int
 var selected:bool=false
@@ -75,10 +75,12 @@ var invincible:bool=false
 @onready var item_1: Button = $StandaloneLayer/SelectPanel/H/Button1
 @onready var item_2: Button = $StandaloneLayer/SelectPanel/H/Button2
 @onready var item_3: Button = $StandaloneLayer/SelectPanel/H/Button3
+@onready var game: Node2D = $".."
 
 
 
 func _ready() -> void:
+	$StandaloneLayer/UI/H.modulate.a=0.0
 	_apply_config()
 	get_tree().paused = false
 	update_axes.call_deferred()
@@ -90,6 +92,9 @@ func _ready() -> void:
 	$InvincibleTimer.timeout.connect(func ():
 		invincible=false
 		create_tween().tween_property($InvincibleCover,"modulate:a",0.0,0.2)
+		)
+	game.game_started.connect(func():
+		get_tree().create_tween().tween_property($StandaloneLayer/UI/H,"modulate:a",1.0,0.4)
 		)
 	
 
@@ -130,7 +135,7 @@ func _process(delta: float) -> void:
 
 
 func _physics_process(delta: float) -> void:
-	if dying or selecting:
+	if dying or selecting or (not game.started):
 		return
 	var dir := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
 	if dir != Vector2.ZERO:
@@ -143,11 +148,6 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 
 
-func _input(event: InputEvent) -> void:
-	if dying and can_restart:
-		if event is InputEventMouseButton:
-			if event.button_index == MouseButton.MOUSE_BUTTON_LEFT:
-				SceneManager.change_scene("res://Scene/game.tscn")
 
 
 func apply_buff(property: StringName, value: Variant) -> void:
@@ -193,13 +193,13 @@ func die() -> void:
 	dying = true
 	animation.play("dying")
 	await get_tree().create_timer(0.7).timeout
-	get_tree().paused = true
 	var t = create_tween()
 	t.tween_property(mask, "modulate:a", 0.5, 0.2)
 	t.tween_property(game_over_label, "visible_characters", 4, 0.4)
 	await get_tree().create_timer(0.6).timeout
-	Levels.game_level=1
-	can_restart = true
+	get_tree().paused = true
+	died.emit()
+	
 
 
 func _face_direction() -> void:
@@ -234,13 +234,13 @@ func _update_camera_shake(delta: float) -> void:
 
 
 func _update_game_level() -> void:
-	while Levels.game_level <= LEVEL_UP_XP.size() and experience >= LEVEL_UP_XP[Levels.game_level - 1]:
-		Levels.game_level += 1
-		level_label.text="Lv."+str(Levels.game_level)
-		experience_bar.max_value = LEVEL_EXP_BAR_MAX[Levels.game_level - 2]
+	while GameManager.game_level <= LEVEL_UP_XP.size() and experience >= LEVEL_UP_XP[GameManager.game_level - 1]:
+		GameManager.game_level += 1
+		level_label.text="Lv."+str(GameManager.game_level)
+		experience_bar.max_value = LEVEL_EXP_BAR_MAX[GameManager.game_level - 2]
 		for bar:TextureProgressBar in [health_bar,health_bar_eased]:
-			bar.max_value=HEALTH_BAR_MAX[Levels.game_level - 2]
-		level_up.emit(Levels.game_level)
+			bar.max_value=HEALTH_BAR_MAX[GameManager.game_level - 2]
+		level_up.emit(GameManager.game_level)
 
 
 func _play_hurt_feedback() -> void:

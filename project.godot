@@ -18,9 +18,8 @@ config/icon="res://icon.svg"
 [autoload]
 
 SoundManager="*uid://cs1fvt2abe3j4"
-Levels="*uid://cfn0dr0b56le4"
 Config="*res://Autoload/Config.gd"
-SceneManager="*uid://b1cekilll2o8l"
+GameManager="*uid://b1cekilll2o8l"
 
 [display]
 

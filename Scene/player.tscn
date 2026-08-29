@@ -192,7 +192,6 @@ shader_parameter/outer_radius = 2.0
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_aqfuc"]
 
 [node name="Player" type="CharacterBody2D" unique_id=1247792071 groups=["player"]]
-process_mode = 3
 collision_layer = 2
 motion_mode = 1
 script = ExtResource("1_y8w33")
@@ -217,7 +216,6 @@ position_smoothing_enabled = true
 position_smoothing_speed = 2.0
 
 [node name="Axes" type="Node2D" parent="." unique_id=414884466]
-process_mode = 1
 
 [node name="ProgressBar" type="ProgressBar" parent="." unique_id=213471676]
 visible = false
