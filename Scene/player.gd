@@ -58,6 +58,7 @@ var choice:int
 var selected:bool=false
 var selecting:bool=false
 var invincible:bool=false
+var explosion:bool=false
 
 @onready var animation: AnimationPlayer = $Animation
 @onready var sprite: Sprite2D = $Texture
@@ -76,6 +77,7 @@ var invincible:bool=false
 @onready var item_2: Button = $StandaloneLayer/SelectPanel/H/Button2
 @onready var item_3: Button = $StandaloneLayer/SelectPanel/H/Button3
 @onready var game: Node2D = $".."
+@onready var enemies: EnemySpawner = $"../Enemies"
 
 
 
@@ -158,6 +160,18 @@ func apply_buff(property: StringName, value: Variant) -> void:
 		create_tween().tween_property($InvincibleCover,"modulate:a",0.5,0.2)
 		$InvincibleTimer.wait_time=invincible_time
 		$InvincibleTimer.start()
+	if property == &"explosion":
+		for enemy:Enemy in enemies.get_children():
+			var dist:=(enemy.global_position-global_position).length_squared()
+			if dist <= 14400.0:
+				var damage := 5.0
+				enemy.take_hit(damage, true)
+				shock_camera(Config.data["axe"]["hit_camera_shake"])
+				SoundManager.play_sound("laser", "enemy")
+				notify_high_damage()
+		$ExplosionCover.modulate.a=0.7
+		create_tween().tween_property($ExplosionCover,"modulate:a",0.0,0.3)
+		
 
 
 

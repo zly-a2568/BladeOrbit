@@ -7,7 +7,8 @@ enum ItemType{
 	ADD_ROTATE_SPEED = 4,
 	ADD_HIGH_DAMAGE_RATE = 3,
 	ADD_HIGH_DAMAGE_CHANCE = 1,
-	INVINCIBLE = 0
+	INVINCIBLE = 0,
+	EXPLOSION = 8
 }
 var chances: Array = []
 
@@ -136,6 +137,9 @@ func buff(player:Player):
 		ItemType.ADD_HIGH_DAMAGE_CHANCE:
 			property="high_damage_chance"
 			amount=(clamp(player.get("high_damage_chance")+b["add_high_damage_chance"],b["high_damage_chance_min"],b["high_damage_chance_max"])) as float
+		ItemType.EXPLOSION:
+			property="explosion"
+			amount=true
 	player.apply_buff(property,amount)
 
 

@@ -3,6 +3,8 @@ extends Node
 const DEFAULT_CONFIG_PATH := "res://Resource/config.json"
 const USER_CONFIG_PATH := "user://config.json"
 
+const DEBUG := true
+
 var data: Dictionary = {}
 
 
@@ -29,7 +31,8 @@ func _ensure_user_config() -> void:
 
 
 func _load() -> void:
-	var f := FileAccess.open(USER_CONFIG_PATH, FileAccess.READ)
+	
+	var f := FileAccess.open(USER_CONFIG_PATH if not DEBUG else DEFAULT_CONFIG_PATH, FileAccess.READ)
 	if f == null:
 		push_error("无法读取配置文件: " + USER_CONFIG_PATH)
 		return
