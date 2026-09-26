@@ -5,6 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://b06opsogs21ne" path="res://Resource/Tiles/InvincibleCover.png" id="3_ij4jb"]
 [ext_resource type="Texture2D" uid="uid://ccp7583r3stj8" path="res://Resource/Tiles/HealthBar.png" id="3_xa75v"]
 [ext_resource type="Texture2D" uid="uid://c0p51x52uito2" path="res://Resource/Tiles/gohst.png" id="4_58ae2"]
+[ext_resource type="Texture2D" uid="uid://b4erpmesywdjo" path="res://Resource/Tiles/AttackCover.png" id="4_c68nv"]
 [ext_resource type="Script" uid="uid://cii0j5es7c3v1" path="res://Scene/knob.gd" id="5_ivevv"]
 [ext_resource type="Theme" uid="uid://b11g55eg8h4wi" path="res://Resource/theme.tres" id="6_2sw5t"]
 [ext_resource type="Texture2D" uid="uid://cbpold3oq53es" path="res://Resource/Tiles/Expbar.png" id="6_r6jsd"]
@@ -147,9 +148,6 @@ _data = {
 color = Color(0.2734375, 0.2734375, 0.2734375, 0.8039216)
 thickness = 5
 
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_ij4jb"]
-load_path = "res://.godot/imported/InvincibleCover.png-8de0b4cdbc5366030bc21e706d3c0c56.ctex"
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_b8xra"]
 atlas = ExtResource("4_58ae2")
 region = Rect2(115, 227, 26, 27)
@@ -238,9 +236,9 @@ scale = Vector2(3, 3)
 texture = ExtResource("3_ij4jb")
 
 [node name="ExplosionCover" type="Sprite2D" parent="." unique_id=952827891]
-modulate = Color(1, 0, 0, 0)
-scale = Vector2(15, 15)
-texture = SubResource("CompressedTexture2D_ij4jb")
+modulate = Color(1, 1, 1, 0)
+scale = Vector2(2, 2)
+texture = ExtResource("4_c68nv")
 
 [node name="StandaloneLayer" type="CanvasLayer" parent="." unique_id=880747269]
 
