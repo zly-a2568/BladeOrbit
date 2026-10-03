@@ -11,6 +11,7 @@ func _ready() -> void:
 	t.tween_property($StartLayer/V/Title,"offset_transform_position:x",0.0,1.0).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
 	t.tween_property($StartLayer/V/Start,"offset_transform_scale",Vector2.ONE,0.5).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
 	t.tween_property($StartLayer/V/Quit,"offset_transform_scale",Vector2.ONE,0.5).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+	GameManager.camera_inst=$PhantomCamera2D
 	pass # Replace with function body.
 
 

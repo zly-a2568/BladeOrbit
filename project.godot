@@ -20,6 +20,7 @@ config/icon="res://icon.svg"
 SoundManager="*uid://cs1fvt2abe3j4"
 Config="*res://Autoload/Config.gd"
 GameManager="*uid://b1cekilll2o8l"
+PhantomCameraManager="*uid://duq6jhf6unyis"
 
 [display]
 
@@ -36,6 +37,10 @@ display_server/driver.linuxbsd="wayland"
 
 project/assembly_name="Fight"
 
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/phantom_camera/plugin.cfg")
+
 [global_group]
 
 player=""
@@ -48,6 +53,7 @@ pointing/emulate_touch_from_mouse=true
 [physics]
 
 3d/physics_engine="Jolt Physics"
+common/physics_interpolation=true
 
 [rendering]
 

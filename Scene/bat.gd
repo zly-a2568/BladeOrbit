@@ -21,6 +21,7 @@ func _apply_config() -> void:
 
 
 func _act(_delta: float) -> void:
+	super(_delta)
 	if player == null:
 		return
 	var to_player := player.global_position - global_position

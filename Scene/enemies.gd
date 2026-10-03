@@ -32,6 +32,7 @@ var spawn_interval: float = 3.0
 @onready var obstacles: TileMapLayer = $"../Obstacles"
 @onready var player: Player = $"../Player"
 @onready var game: Node2D = $".."
+@onready var phantom_camera_2d: PhantomCamera2D = $"../PhantomCamera2D"
 
 var spawn_timer := 0.0
 var player_tile := Vector2i.ZERO

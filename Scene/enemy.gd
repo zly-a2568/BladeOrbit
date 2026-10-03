@@ -68,7 +68,9 @@ func _physics_process(delta: float) -> void:
 
 
 func _act(delta: float) -> void:
-	pass
+	if (global_position-(get_tree().get_first_node_in_group("player") as Player).global_position).length_squared()<=40000:
+		if self not in GameManager.camera_inst.follow_targets:
+			GameManager.camera_inst.append_follow_targets(self)
 
 
 func _can_move() -> bool:
@@ -156,6 +158,7 @@ func _spawn_attacking_number(amount: float, is_critical: bool) -> void:
 
 
 func _drop_loot_and_free() -> void:
+	GameManager.camera_inst.erase_follow_targets(self)
 	if randf_range(0.0, 1.0) <= LOOT_CHANCE:
 		var inst = ITEM.instantiate() as Area2D
 		inst.global_position = global_position

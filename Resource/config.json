@@ -41,7 +41,7 @@
   },
   "axe": {
 	"radius": 40.0,
-	"hit_camera_shake": 4.0,
+	"hit_camera_shake": 5.0,
 	"base_damage": 2.0
   },
   "item": {

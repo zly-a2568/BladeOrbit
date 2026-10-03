@@ -62,7 +62,7 @@ var explosion:bool=false
 
 @onready var animation: AnimationPlayer = $Animation
 @onready var sprite: Sprite2D = $Texture
-@onready var camera: Camera2D = $Camera2D
+@onready var camera: = $"../PhantomCamera2D"
 @onready var axes: Node2D = $Axes
 @onready var invincible_bar: ProgressBar = $ProgressBar
 @onready var shader := $StandaloneLayer/Vignette.material as ShaderMaterial
@@ -78,6 +78,7 @@ var explosion:bool=false
 @onready var item_3: Button = $StandaloneLayer/SelectPanel/H/Button3
 @onready var game: Node2D = $".."
 @onready var enemies: EnemySpawner = $"../Enemies"
+@onready var phantom_camera_2d: PhantomCamera2D = $"../PhantomCamera2D"
 
 
 
@@ -91,6 +92,7 @@ func _ready() -> void:
 		bar.value = health
 	experience_bar.max_value = Config.data["player"]["exp_bar_initial_max"]
 	level_up.connect(_on_level_up)
+	phantom_camera_2d.append_follow_targets(self)
 	$InvincibleTimer.timeout.connect(func ():
 		invincible=false
 		create_tween().tween_property($InvincibleCover,"modulate:a",0.0,0.2)
@@ -141,11 +143,12 @@ func _physics_process(delta: float) -> void:
 		return
 	var dir := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
 	if dir != Vector2.ZERO:
-		var speed := SPEED * (DAMAGED_SPEED_FACTOR if damaged else 1.0)
+		var speed := move_toward(velocity.length(),SPEED * (DAMAGED_SPEED_FACTOR if damaged else 1.0),SPEED*0.1)
 		velocity = speed * dir
 		_face_direction()
 	else:
-		velocity = Vector2.ZERO
+		velocity.x=move_toward(velocity.x,0,SPEED*0.1)
+		velocity.y=move_toward(velocity.y,0,SPEED*0.1)
 		animation.play("RESET")
 	move_and_slide()
 
@@ -213,7 +216,6 @@ func die() -> void:
 	await get_tree().create_timer(0.6).timeout
 	get_tree().paused = true
 	died.emit()
-	
 
 
 func _face_direction() -> void:
@@ -240,11 +242,9 @@ func _update_vignette_pulse() -> void:
 func _update_camera_shake(delta: float) -> void:
 	if not shocking:
 		return
-	camera.offset.x = randf_range(-shock_amount, shock_amount)
-	camera.offset.y = randf_range(-shock_amount, shock_amount)
-	shock_amount = move_toward(shock_amount, 0, RECOVERY_SPEED * delta)
-	if is_zero_approx(camera.offset.length_squared()):
-		shocking = false
+	phantom_camera_2d.noise.amplitude=shock_amount*10.0
+	await  create_tween().tween_property(phantom_camera_2d,"noise:amplitude",0.0,0.5).finished
+	shocking=false
 
 
 func _update_game_level() -> void:
