@@ -49,8 +49,6 @@ var recovery_time: float = 1.0
 var invincible_time:float = 5.0
 
 var damaged: bool = false
-var shocking: bool = false
-var shock_amount: float = 0
 #var game_level: int = 1
 var dying: bool = false
 var level_up_vals:=[]
@@ -134,7 +132,6 @@ func _process(delta: float) -> void:
 	_update_vignette_pulse()
 	if dying:
 		return
-	_update_camera_shake(delta)
 	_update_game_level()
 
 
@@ -189,8 +186,8 @@ func get_damage(amount: int) -> void:
 
 
 func shock_camera(amount: float) -> void:
-	shocking = true
-	shock_amount = amount
+	phantom_camera_2d.noise.amplitude=amount*10.0
+	create_tween().tween_property(phantom_camera_2d,"noise:amplitude",0.0,0.5)
 
 
 func notify_high_damage() -> void:
@@ -239,12 +236,6 @@ func _update_vignette_pulse() -> void:
 		shader.set_shader_parameter("alpha", 0.0)
 
 
-func _update_camera_shake(delta: float) -> void:
-	if not shocking:
-		return
-	phantom_camera_2d.noise.amplitude=shock_amount*10.0
-	await  create_tween().tween_property(phantom_camera_2d,"noise:amplitude",0.0,0.5).finished
-	shocking=false
 
 
 func _update_game_level() -> void:

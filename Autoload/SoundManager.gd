@@ -18,12 +18,15 @@ func play_sound(name:String,entity:String) -> void:
 	if entity=="player":
 		$Player.stream=sound_list.get(name)
 		$Player.play()
+		await get_tree().process_frame
 	if entity=="enemy":
 		$Enemy.stream=sound_list.get(name)
 		$Enemy.play()
+		await get_tree().process_frame
 	if entity=="item":
 		$Item.stream=sound_list.get(name)
 		$Item.play()
+		await get_tree().process_frame
 
 func set_bus(name:String):
 	$Player.bus=name
