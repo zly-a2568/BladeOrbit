@@ -73,7 +73,7 @@ func _act(delta: float) -> void:
 			GameManager.camera_inst.append_follow_targets(self)
 	else:
 		if self in GameManager.camera_inst.follow_targets:
-			GameManager.camera_inst.append_follow_targets(self)
+			GameManager.camera_inst.follow_targets.erase(self)
 
 func _can_move() -> bool:
 	return not dying
@@ -93,6 +93,7 @@ func die() -> void:
 		return
 	dying = true
 	died.emit(exp_reward)
+	GameManager.camera_inst.follow_targets.erase(self)
 	var tween := get_tree().create_tween()
 	tween.tween_property(sprite, "modulate:a", 0.0, 0.2)
 	tween.tween_callback(_drop_loot_and_free)
