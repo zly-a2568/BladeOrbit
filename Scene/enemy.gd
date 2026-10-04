@@ -71,7 +71,9 @@ func _act(delta: float) -> void:
 	if (global_position-(get_tree().get_first_node_in_group("player") as Player).global_position).length_squared()<=40000:
 		if self not in GameManager.camera_inst.follow_targets:
 			GameManager.camera_inst.append_follow_targets(self)
-
+	else:
+		if self in GameManager.camera_inst.follow_targets:
+			GameManager.camera_inst.append_follow_targets(self)
 
 func _can_move() -> bool:
 	return not dying
