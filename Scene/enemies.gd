@@ -38,6 +38,7 @@ var spawn_timer := 0.0
 var player_tile := Vector2i.ZERO
 var grid_center := Vector2i.ZERO
 var astar_grid := AStarGrid2D.new()
+var map_rect:Rect2i
 
 
 func _ready() -> void:
@@ -46,6 +47,7 @@ func _ready() -> void:
 	player.level_up.connect(_on_player_level_up)
 	player_tile = obstacles.local_to_map(obstacles.to_local(player.global_position))
 	grid_center = player_tile
+	map_rect=map.get_used_rect()
 	_rebuild_grid(grid_center)
 
 
@@ -63,6 +65,8 @@ func request_path(from_tile: Vector2i, to_tile: Vector2i) -> Array[Vector2i]:
 
 
 func spawn_enemy_at(coord: Vector2i, type: EnemyType) -> void:
+	if not map_rect.has_point(coord):
+		return
 	for i in range(8):
 		if not _is_solid(coord):
 			break
