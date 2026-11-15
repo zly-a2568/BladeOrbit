@@ -68,7 +68,10 @@ func _physics_process(delta: float) -> void:
 
 
 func _act(delta: float) -> void:
-	if (global_position-(get_tree().get_first_node_in_group("player") as Player).global_position).length_squared()<=40000:
+	var player = (get_tree().get_first_node_in_group("player") as Player)
+	if player == null:
+		return
+	if (global_position-player.global_position).length_squared()<=40000:
 		if self not in GameManager.camera_inst.follow_targets:
 			GameManager.camera_inst.append_follow_targets(self)
 	else:

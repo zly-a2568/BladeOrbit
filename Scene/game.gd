@@ -1,5 +1,7 @@
 extends Node2D
 
+@onready var mask: TextureRect = $GameOverLayer/Mask
+@onready var game_over_label: Label = $GameOverLayer/Label
 
 var started:bool=false
 var can_restart:bool=false
@@ -29,6 +31,11 @@ func _input(event: InputEvent) -> void:
 
 func _on_player_died() -> void:
 	can_restart=true
+	var t = create_tween()
+	t.tween_property(mask, "modulate:a", 0.5, 0.2)
+	t.tween_property(game_over_label, "visible_characters", 4, 0.4)
+	await get_tree().create_timer(0.6).timeout
+	get_tree().paused = true
 	pass # Replace with function body.
 
 

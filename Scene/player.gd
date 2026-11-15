@@ -207,12 +207,9 @@ func die() -> void:
 	dying = true
 	animation.play("dying")
 	await get_tree().create_timer(0.7).timeout
-	var t = create_tween()
-	t.tween_property(mask, "modulate:a", 0.5, 0.2)
-	t.tween_property(game_over_label, "visible_characters", 4, 0.4)
-	await get_tree().create_timer(0.6).timeout
-	get_tree().paused = true
+	GameManager.camera_inst.follow_targets.erase(self)
 	died.emit()
+	queue_free()
 
 
 func _face_direction() -> void:

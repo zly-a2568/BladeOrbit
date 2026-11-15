@@ -48,8 +48,11 @@ func _ready() -> void:
 	player_tile = obstacles.local_to_map(obstacles.to_local(player.global_position))
 	grid_center = player_tile
 	map_rect=map.get_used_rect()
+	player.died.connect(_on_player_died)
 	_rebuild_grid(grid_center)
 
+func _on_player_died():
+	process_mode=Node.PROCESS_MODE_DISABLED
 
 func _physics_process(delta: float) -> void:
 	if not game.started:
@@ -120,6 +123,8 @@ func _tick_spawning(delta: float) -> void:
 
 
 func _update_player_tile() -> void:
+	if player==null:
+		return
 	var tile := obstacles.local_to_map(obstacles.to_local(player.global_position))
 	if tile == player_tile:
 		return
@@ -129,6 +134,8 @@ func _update_player_tile() -> void:
 
 
 func _random_spawn_position() -> Vector2:
+	if player==null:
+		return Vector2.ZERO
 	var angle := randf_range(-PI, PI)
 	var pos := player.global_position \
 			+ randf_range(SPAWN_DISTANCE_MIN, SPAWN_DISTANCE_MAX) * Vector2(cos(angle), sin(angle)) \
