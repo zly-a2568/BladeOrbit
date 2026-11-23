@@ -99,7 +99,7 @@
 	"shoot_interval": 1.0
   },
   "knob": {
-	"pos_delta": [39.0, 39.0],
-	"max_offset": 50.0
+	"pos_delta": [13.0, 13.0],
+	"max_offset": 20.0
   }
 }

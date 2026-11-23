@@ -207,7 +207,7 @@ func die() -> void:
 	dying = true
 	animation.play("dying")
 	await get_tree().create_timer(0.7).timeout
-	GameManager.camera_inst.follow_targets.erase(self)
+	GameManager.camera_inst.erase_follow_targets(self)
 	died.emit()
 	queue_free()
 

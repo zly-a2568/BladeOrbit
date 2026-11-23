@@ -31,6 +31,7 @@ func _input(event: InputEvent) -> void:
 
 func _on_player_died() -> void:
 	can_restart=true
+	create_tween().tween_property(GameManager.camera_inst,"noise:amplitude",0.0,0.5)
 	var t = create_tween()
 	t.tween_property(mask, "modulate:a", 0.5, 0.2)
 	t.tween_property(game_over_label, "visible_characters", 4, 0.4)

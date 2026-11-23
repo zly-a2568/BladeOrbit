@@ -8,6 +8,7 @@ func _ready() -> void:
 
 func reset():
 	game_level=1
+	camera_inst=null
 
 func change_scene(path:String)->void:
 	var tree=get_tree()
